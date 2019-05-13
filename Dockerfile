@@ -4,7 +4,6 @@ FROM ubuntu:bionic-20190424
 # Non-root user
 ARG INTERNAL_USER="internal"
 ARG INTERNAL_UID="1000"
-ARG INTERNAL_GID="100"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -13,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 #
 # For the list of available ale linters, see :help ale-support.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends \
+ && apt-get install --yes --no-install-recommends \
     build-essential \
     # Install certificates or wget fails to talk to github in hadolint download.
     # https://unix.stackexchange.com/a/445609
@@ -70,5 +69,8 @@ RUN git clone --bare "https://github.com/davidvandebunte/dotfiles" "$HOME/.dotf"
  && dotf() { /usr/bin/git --git-dir=$HOME/.dotf/ --work-tree=$HOME $@ ; } \
  && dotf checkout \
  && dotf submodule update --init --recursive \
+ # Set the upstream of the branch you checked out so "dotf rpull" works
+ # as expected. Run "dotf branch -vv" to verify your upstream branch.
+ && dotf branch -u origin/master \
  && pip3 install wheel --user \
  && pip3 install gitlint cmakelint --user
