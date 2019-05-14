@@ -65,10 +65,17 @@ ENV PATH="${HOME}/.local/bin:${PATH}"
 # Install pip packages as the user:
 # https://stackoverflow.com/a/42021993
 # https://askubuntu.com/a/802594/612216
-RUN git clone --bare "https://github.com/davidvandebunte/dotfiles" "$HOME/.dotf" \
- && dotf() { /usr/bin/git --git-dir=$HOME/.dotf/ --work-tree=$HOME $@ ; } \
+#
+# We must install the dotfiles to a ".cfg" directory because ".cfg"
+# is hard-coded into the .bash_aliases file in the dotfiles we check
+# out.
+RUN git clone --bare "https://github.com/davidvandebunte/dotfiles" "$HOME/.cfg" \
+ && dotf() { /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME $@ ; } \
  && dotf checkout \
  && dotf submodule update --init --recursive \
+ # See: https://stackoverflow.com/a/36410649/622049
+ && dotf config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' \
+ && dotf fetch \
  # Set the upstream of the branch you checked out so "dotf rpull" works
  # as expected. Run "dotf branch -vv" to verify your upstream branch.
  && dotf branch -u origin/master \
