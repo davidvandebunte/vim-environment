@@ -7,6 +7,10 @@ ARG INTERNAL_UID="1000"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Required by proselint
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
 # Install tools as administrator:
 # https://askubuntu.com/a/6903/612216
 #
@@ -23,6 +27,7 @@ RUN apt-get update \
     clang-tidy-6.0 \
     # Primarily for clang-tidy
     clang-tools-6.0 \
+    curl \
     git \
     # OpenMP is required for many C++ programs
     # https://askubuntu.com/a/903982/612216
@@ -30,6 +35,8 @@ RUN apt-get update \
     # SSL is required to compile many C++ programs
     libssl-dev \
     python3 python3-pip python3-setuptools \
+    # https://github.com/amperser/proselint
+    python3-proselint \
     shellcheck \
     tree \
     # Install -gtk3 version to get +clipboard
@@ -46,10 +53,20 @@ RUN apt-get update \
     # clang-check.
  && update-alternatives --install /usr/bin/clang-check clang-check /usr/bin/clang-check-6.0 100 \
  && update-alternatives --install /usr/bin/clang-tidy  clang-tidy  /usr/bin/clang-tidy-6.0  100 \
+    # https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04#installing-using-a-ppa
+ && curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh \
+ && bash nodesource_setup.sh \
+ && apt-get install --yes --no-install-recommends nodejs \
+    # https://github.com/w0rp/ale/blob/master/ale_linters/markdown/markdownlint.vim
+    # https://github.com/DavidAnson/markdownlint
+    # https://github.com/igorshubovych/markdownlint-cli
+ && npm install markdownlint --save-dev \
+ && npm install -g markdownlint-cli \
  && rm -rf /var/lib/apt/lists/*
 
 # Advantages to builder pattern:
 # - Remove wget (but you might want this anyways)
+# - More build stages so you bust the cache less
 
 RUN useradd --create-home --shell /bin/bash --uid $INTERNAL_UID $INTERNAL_USER
 
