@@ -34,6 +34,7 @@ RUN apt-get update \
     libomp-dev \
     # SSL is required to compile many C++ programs
     libssl-dev \
+    openjdk-8-jre \
     python3 python3-pip python3-setuptools \
     # https://github.com/amperser/proselint
     python3-proselint \
@@ -43,6 +44,8 @@ RUN apt-get update \
     # https://stackoverflow.com/a/11489440/622049
     vim-gtk3 \
     wget \
+ && wget https://github.com/redpen-cc/redpen/releases/download/redpen-1.10.1/redpen-1.10.1.tar.gz \
+ && tar xvf redpen-1.10.1.tar.gz \
     # hadolint is a linter detected by ALE
  && wget https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 \
  && chmod +x hadolint-Linux-x86_64 \
@@ -63,6 +66,8 @@ RUN apt-get update \
  && npm install markdownlint --save-dev \
  && npm install -g markdownlint-cli \
  && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/redpen-distribution-1.10.1/bin/:${PATH}"
 
 # Advantages to builder pattern:
 # - Remove wget (but you might want this anyways)
