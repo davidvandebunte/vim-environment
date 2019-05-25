@@ -40,6 +40,7 @@ RUN apt-get update \
     python3-proselint \
     shellcheck \
     tree \
+    unzip \
     # Install -gtk3 version to get +clipboard
     # https://stackoverflow.com/a/11489440/622049
     vim-gtk3 \
@@ -65,6 +66,9 @@ RUN apt-get update \
     # https://github.com/igorshubovych/markdownlint-cli
  && npm install markdownlint --save-dev \
  && npm install -g markdownlint-cli \
+ && wget https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip \
+ && unzip terraform_0.11.14_linux_amd64.zip \
+ && mv terraform /usr/local/bin/ \
  && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/redpen-distribution-1.10.1/bin/:${PATH}"
