@@ -1,0 +1,9 @@
+name: vim
+
+windows:
+  - docker:
+      panes:
+          - history -s "docker build -t vim-env ."
+  - vim:
+      panes:
+          - dfr vim-env
