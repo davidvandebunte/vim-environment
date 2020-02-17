@@ -97,6 +97,9 @@ ENV PATH="${HOME}/.local/bin:${PATH}"
 # out.
 RUN git clone --bare "https://github.com/davidvandebunte/dotfiles" "$HOME/.cfg" \
  && dotf() { /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME $@ ; } \
+ && mkdir -p .config-backup \
+ && dotf checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
+   xargs -I{} mv {} .config-backup/{} \
  && dotf checkout \
  && dotf submodule update --init --recursive \
  # See: https://stackoverflow.com/a/36410649/622049
